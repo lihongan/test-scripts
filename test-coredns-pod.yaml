@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-coredns
+spec:
+  containers:
+  - args:
+    - -conf
+    - /etc/coredns/Corefile
+    command:
+    - coredns
+    image: quay.io/openshift/origin-coredns:latest
+    imagePullPolicy: IfNotPresent
+    name: coredns
+    volumeMounts:
+    - mountPath: /etc/coredns
+      name: config-volume
+      readOnly: true
+  nodeSelector:
+    kubernetes.io/os: linux
+  volumes:
+  - configMap:
+      defaultMode: 420
+      items:
+      - key: Corefile
+        path: Corefile
+      name: test-coredns-cm
+    name: config-volume
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-coredns-cm
+data:
+  Corefile: |
+    .:53 {
+        bufsize 512
+        errors
+        log . {
+            class error
+        }
+        health {
+            lameduck 20s
+        }
+        ready
+        prometheus 127.0.0.1:9153
+        forward . 8.8.8.8 {
+            policy random
+        }
+        cache 900 {
+            denial 9984 30
+        }
+        reload
+    }
