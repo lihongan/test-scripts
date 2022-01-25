@@ -1,0 +1,19 @@
+apiVersion: externaldns.olm.openshift.io/v1alpha1
+kind: ExternalDNS
+metadata:
+  name: sample-gcp
+spec:
+  provider:
+    type: GCP
+  zones:
+    - "xxxx-private-zone"
+  source:
+    type: Service
+    service:
+      serviceType:
+        - LoadBalancer
+        - ClusterIP
+    annotationFilter:
+      external-dns.mydomain.org/publish: "yes"
+    fqdnTemplate:
+      - "{{.Name}}.hongli-gcp.qe.gcp.devcluster.openshift.com"
