@@ -1,0 +1,16 @@
+apiVersion: externaldns.olm.openshift.io/v1alpha1
+kind: ExternalDNS
+metadata:
+  name: sample-aws
+spec:
+  provider:
+    type: AWS
+  zones:
+    - "XXXXXX"
+  source:
+    openshiftRouteOptions:
+      routerName: default
+    type: OpenShiftRoute
+    labelFilter:
+      matchLabels:
+        external-dns.mydomain.org/publish: "yes"
