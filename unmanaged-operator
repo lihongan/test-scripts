@@ -1,0 +1,25 @@
+### note
+### for 4.9 and later, please use `"group":"apps"` instead of `apps/v1`. 
+### for example:
+oc patch clusterversions/version --type=json --patch='[{"op":"add","path":"/spec/overrides","value":[{"kind":"Deployment","group":"apps","name":"ingress-operator","namespace":"openshift-ingress-operator","unmanaged":true}]}]'
+
+
+#########################################################
+### set dns operator to unmanaged
+oc patch clusterversions/version --type=json --patch='[{"op":"add","path":"/spec/overrides","value":[{"kind":"Deployment","group":"apps/v1","name":"dns-operator","namespace":"openshift-dns-operator","unmanaged":true}]}]'
+
+### scale dns operator to 0
+oc -n openshift-dns-operator scale deployment.apps/dns-operator --replicas=0
+
+### update the configmap
+oc -n openshift-dns edit configmaps/dns-default
+
+
+#########################################################
+###  set ingress operator to unmanaged
+oc patch clusterversions/version --type=json --patch='[{"op":"add","path":"/spec/overrides","value":[{"kind":"Deployment","group":"apps/v1","name":"ingress-operator","namespace":"openshift-ingress-operator","unmanaged":true}]}]'
+
+### scale ingress operator to 0
+oc -n openshift-ingress-operator scale deployment.apps/ingress-operator --replicas=0
+
+### update the router deployment
