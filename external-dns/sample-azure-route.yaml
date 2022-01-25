@@ -1,0 +1,13 @@
+apiVersion: externaldns.olm.openshift.io/v1alpha1
+kind: ExternalDNS
+metadata:
+  name: sample-azure-route
+spec:
+  provider:
+    type: Azure
+  source:
+    openshiftRouteOptions:
+      routerName: default
+    type: OpenShiftRoute
+  zones:
+    - "/subscriptions/xxxx/privateDnsZones/xxxx"
