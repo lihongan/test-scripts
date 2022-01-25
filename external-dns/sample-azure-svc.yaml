@@ -1,0 +1,20 @@
+apiVersion: externaldns.olm.openshift.io/v1alpha1
+kind: ExternalDNS
+metadata:
+  name: sample-azure
+spec:
+  provider:
+    type: Azure
+  zones:
+    - "/subscriptions/xxxx/privateDnsZones/xxxxx"
+  source:
+    type: Service
+    service:
+      serviceType:
+        - LoadBalancer
+        - ClusterIP
+    labelFilter:
+      matchLabels:
+        external-dns.mydomain.org/publish: "yes"
+    fqdnTemplate:
+      - "{{.Name}}.hongli-az.qe.azure.devcluster.openshift.com"
