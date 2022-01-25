@@ -1,0 +1,13 @@
+apiVersion: externaldns.olm.openshift.io/v1alpha1
+kind: ExternalDNS
+metadata:
+  name: sample-gcp
+spec:
+  provider:
+    type: GCP
+  zones:
+    - "xxxxx-private-zone"
+  source:
+    openshiftRouteOptions:
+      routerName: default
+    type: OpenShiftRoute
