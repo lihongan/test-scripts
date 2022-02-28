@@ -13,7 +13,8 @@ create_apps_certs()
   openssl genrsa -out ca.key 2048
   openssl req -x509 -new -nodes -key ca.key -days 3650 -out ca.pem -subj "/CN=network_edge_test_ca"
 
-  # replace DNS.1 with current domain
+  # download example openssl.conf and replace SAN DNS.1 with current domain
+  curl -O -sS https://raw.githubusercontent.com/lihongan/test-scripts/master/custom-cert/example-openssl.conf
   sed "s/example.com/${APPS_DOMAIN}/g" example-openssl.conf > openssl.conf
 
   openssl genrsa -out apps.key 2048
