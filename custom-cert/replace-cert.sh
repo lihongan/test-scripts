@@ -17,6 +17,7 @@ create_apps_certs()
   curl -O -sS https://raw.githubusercontent.com/lihongan/test-scripts/master/custom-cert/example-openssl.conf
   sed "s/example.com/${APPS_DOMAIN}/g" example-openssl.conf > openssl.conf
 
+  # use the updated openssl.conf to generate server certificate
   openssl genrsa -out apps.key 2048
   openssl req -new -config openssl.conf -key apps.key -out apps.csr
   openssl x509 -req -CA ca.pem -CAkey ca.key -CAcreateserial -extfile openssl.conf -extensions v3_req -in apps.csr -out apps.crt -days 365
@@ -32,7 +33,7 @@ echo "Your ingress subdomain is: $APPS_DOMAIN"
 tmp_dir=$(mktemp -d -t rpl-certs-$(date +%Y%m%d-%H%M%S)-XXX)
 echo "Created tmp folder $tmp_dir"
 
-create_apps_certs $tmp_dir $domain
+create_apps_certs $tmp_dir $APPS_DOMAIN
 
 # create secret for ingress and replace default ingress certs 
 oc --namespace openshift-ingress create secret tls custom-certs-default --cert=$tmp_dir/apps.crt --key=$tmp_dir/apps.key
