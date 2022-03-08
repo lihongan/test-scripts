@@ -15,7 +15,7 @@ create_apps_certs()
   curl -O -sS https://raw.githubusercontent.com/openshift-qe/v3-testfiles/master/routing/openssl.conf
 
   # replace DNS.1 with current domain
-  sed -i "s/example.com/${domain}/g" openssl.conf
+  sed -i.bak "s/example.com/${domain}/g" openssl.conf
 
   openssl genrsa -out apps.key 2048
   openssl req -new -config openssl.conf -key apps.key -out apps.csr
@@ -26,7 +26,7 @@ create_apps_certs()
 }
 
 
-domain="apps.$(oc get dns.config cluster -o jsonpath='{.spec.baseDomain}')"
+domain="$(oc get ingress.config cluster -o jsonpath='{.spec.domain}')"
 echo "Your ingress subdomain is: $domain"
 
 tmp_dir=$(mktemp -d -t rpl-certs-$(date +%Y%m%d-%H%M%S)-XXX)
