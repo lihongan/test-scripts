@@ -20,4 +20,5 @@ Certificate Revocation List (CRL):
             X509v3 CRL Number: 
                 3798
 
-
+### using faketime to generate short lifetime less than one hour, in below case 10 min to be expired after creating the crl
+faketime '50 minutes ago' openssl ca -gencrl -crlhours 1 -out root.crl -config root-ca.cnf
