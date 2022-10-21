@@ -53,7 +53,8 @@ keyUsage = digitalSignature, keyEncipherment
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = www.foo.com
+DNS.1 = example.com
+DNS.2 = *.example.com
 
 [ v3_ca ]
 # Extensions for a typical CA
