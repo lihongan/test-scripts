@@ -2,4 +2,60 @@
 ```
 oc annotate service test1 service.beta.openshift.io/serving-cert-secret-name=test1
 
+oc describe service <service_name>
+...
+service.beta.openshift.io/serving-cert-secret-name: <secret>
+...
+
+oc get secret <secret>
+
+### Manually rotate the generated service certificate
+oc delete secret <secret>
+
+oc annotate configmap test1 service.beta.openshift.io/inject-cabundle=true
+oc get configmap <config_map_name> -o yaml
+
+
+### apiservice
+oc annotate apiservice test1 service.beta.openshift.io/inject-cabundle=true
+
+### CRD
+oc annotate crd test1 service.beta.openshift.io/inject-cabundle=true
+
+oc get crd <crd_name> -o yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    service.beta.openshift.io/inject-cabundle: "true"
+...
+spec:
+  conversion:
+    strategy: Webhook
+    webhook:
+      clientConfig:
+        caBundle: <CA_BUNDLE>
+
+
+### mutatingwebhookconfigurations
+oc annotate mutatingwebhookconfigurations test1 service.beta.openshift.io/inject-cabundle=true
+
+### validatingwebhookconfigurations
+oc annotate validatingwebhookconfigurations test1 service.beta.openshift.io/inject-cabundle=true
+
+
+### View Service CA
+oc get secrets/signing-key -n openshift-service-ca \
+     -o template='{{index .data "tls.crt"}}' \
+     | base64 --decode \
+     | openssl x509 -noout -enddate
+
+
+### Manually rotate the service CA
+oc delete secret/signing-key -n openshift-service-ca
+
+### To apply the new certificates to all services, restart all the pods in your cluster
+
+
+
 ```
