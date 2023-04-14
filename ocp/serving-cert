@@ -1,0 +1,5 @@
+
+```
+oc annotate service test1 service.beta.openshift.io/serving-cert-secret-name=test1
+
+```
