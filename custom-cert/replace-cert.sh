@@ -44,4 +44,4 @@ oc patch --type=merge --namespace openshift-ingress-operator ingresscontrollers/
 oc create configmap user-ca-bundle --from-file=ca-bundle.crt=$tmp_dir/ca.pem -n openshift-config
 oc patch proxy/cluster --patch '{"spec":{"trustedCA":{"name":"user-ca-bundle"}}}' --type=merge
 
-rm -rf $tmp_dir
+# rm -rf $tmp_dir
