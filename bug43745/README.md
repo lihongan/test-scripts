@@ -1,7 +1,7 @@
 ## Two Clients for OCPBUGS-43745 Investigation
 see https://issues.redhat.com/browse/OCPBUGS-43745
 
-### Goland Client
+### Golang HttP Client
 ```console
 $ go run simul_eag.go
 ```
