@@ -3,7 +3,7 @@ see https://issues.redhat.com/browse/OCPBUGS-43745
 
 ### Golang Http Client
 ```console
-$ go run simul_eag.go
+$ go run simul_eap.go
 ```
 
 ### Java Apache HTTP Client (simplify from EAP test code)
