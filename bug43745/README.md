@@ -12,6 +12,6 @@ download HttpComponets lib from https://hc.apache.org/downloads.cgi
 $ mkdir java
 $ cd java
 $ tar -zxf  httpcomponents-client-4.5.14-bin.tar.gz
-$ javac -cp `.:./lib/*' SimulEapTest.java
+$ javac -cp '.:./lib/*' SimulEapTest.java
 $ java -cp '.:./lib/*' SimulEapTest
 ```
