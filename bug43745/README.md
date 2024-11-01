@@ -1,11 +1,12 @@
-## Two Clients used to investegate BUG https://issues.redhat.com/browse/OCPBUGS-43745
+## Two Clients for OCPBUGS-43745 Investigation
+see https://issues.redhat.com/browse/OCPBUGS-43745
 
 ### Goland Client
 ```console
 $ go run simul_eag.go
 ```
 
-### Java Apache HTTP Client (simple copy from EAP test code)
+### Java Apache HTTP Client (simplify from EAP test code)
 
 download HttpComponets lib from https://hc.apache.org/downloads.cgi
 ```console
