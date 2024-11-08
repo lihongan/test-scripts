@@ -66,7 +66,7 @@ spec:
         from: All
 EOF
 
-// ensure gateway pod ans LB service are created
+// ensure gateway pod and LB service are created
 $ oc -n openshift-ingress get svc,pod
 
 ```
@@ -75,7 +75,7 @@ $ oc -n openshift-ingress get svc,pod
 
 ```console
 $ oc new-project gwapi-test
-$ oc create -f testdata/web-server-rc.yaml
+$ oc create -f https://raw.githubusercontent.com/lihongan/test-scripts/refs/heads/master/GatewayAPI/web-server-rc.yaml
 
 $ oc create -f - <<EOF
 apiVersion: gateway.networking.k8s.io/v1beta1
