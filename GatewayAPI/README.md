@@ -26,6 +26,7 @@ EOF
 $ oc get gatewayclass
 $ oc -n openshift-operators get sub,csv,pod
 $ oc -n openshift-ingress get pod
+$ oc -n openshift-ingress get servicemeshcontrolplanes
 ```
 
 ### Create Gateway
