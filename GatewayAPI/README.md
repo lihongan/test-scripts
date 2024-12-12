@@ -72,6 +72,7 @@ EOF
 
 // ensure gateway pod and LB service are created
 $ oc -n openshift-ingress get svc,pod
+$ oc -n openshift-ingress get gateway
 
 ```
 
