@@ -5,7 +5,7 @@ Tested with 4.18
 ```console
 $ oc patch featuregates/cluster --type=merge --patch='{"spec":{"featureSet":"CustomNoUpgrade","customNoUpgrade":{"enabled":["GatewayAPI"]}}}'
 
-## ensure gateway CRDs are created
+// ensure gateway CRDs are created
 $ oc get crds | grep -e gateway.networking.k8s.io -e maistra.io
 ```
 note: all nodes will be restarted, wait for some time until router pods are recreated.
@@ -22,11 +22,14 @@ spec:
   controllerName: openshift.io/gateway-controller
 EOF
 
-// ensure OSSM/istio operatir is installed as well
+// wait and ensure OSSM/istio operator is installed
 $ oc get gatewayclass
 $ oc -n openshift-operators get sub,csv,pod
 $ oc -n openshift-ingress get pod
 $ oc -n openshift-ingress get servicemeshcontrolplanes
+
+// more servicemesh related CRDs are created
+$ oc get crds | grep -e gateway.networking.k8s.io -e maistra.io
 ```
 
 ### Create Gateway
@@ -76,7 +79,7 @@ $ oc -n openshift-ingress get svc,pod
 
 ```console
 $ oc new-project gwapi-test
-$ oc create -f https://raw.githubusercontent.com/lihongan/test-scripts/refs/heads/master/GatewayAPI/web-server-rc.yaml
+$ oc create -f https://raw.githubusercontent.com/lihongan/test-scripts/refs/heads/master/GatewayAPI/web-server-deploy.yaml
 
 $ oc create -f - <<EOF
 apiVersion: gateway.networking.k8s.io/v1
