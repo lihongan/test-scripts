@@ -31,8 +31,8 @@ items:
   kind: Service
   metadata:
     labels:
-      name: service-insecure
-    name: service-insecure
+      name: service-unsecure
+    name: service-unsecure
   spec:
     ports:
     - name: http
