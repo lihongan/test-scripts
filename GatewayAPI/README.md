@@ -108,3 +108,7 @@ $ curl --cacert /tmp/gwapi/ca.crt "https://test.$gwapi_domain/" -v
 
 ```
 note: HTTP2 is enabled by default in envoy proxy
+
+## useful links:
+https://github.com/kubernetes-sigs/gateway-api
+https://gateway-api.sigs.k8s.io/
