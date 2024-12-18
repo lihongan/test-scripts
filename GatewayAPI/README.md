@@ -1,5 +1,5 @@
-## Configuration Steps
-Tested with 4.18 
+## Configuration Steps/Smoke Test
+Tested with OCP 4.18 (AWS, Azure, GCP, IBMCloud)
 
 ### Enable feature gate
 ```console
@@ -110,5 +110,10 @@ $ curl --cacert /tmp/gwapi/ca.crt "https://test.$gwapi_domain/" -v
 note: HTTP2 is enabled by default in envoy proxy
 
 ## useful links:
+
 https://github.com/kubernetes-sigs/gateway-api
+
 https://gateway-api.sigs.k8s.io/
+
+https://github.com/openshift-service-mesh
+
