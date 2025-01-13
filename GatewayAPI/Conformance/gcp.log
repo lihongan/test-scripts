@@ -1,10 +1,7 @@
-=== NAME  TestConformance/HTTPExactPathMatching/3_request_to_'/one/example'_should_receive_a_404
-    http.go:238: Response expectation failed for request: {URL: {Scheme:http Opaque: User: Host:34.28.236.137 Path:/one/example RawPath: OmitHost:false ForceQuery:false RawQuery: Fragment: RawFragment:}, Host: , Protocol: HTTP, Method: GET, Headers: map[X-Echo-Set-Header:[]], UnfollowRedirect: false, Server: , CertPem: <truncated>, KeyPem: <truncated>}  not ready yet: expected status code to be 404, got 500 (after 29.977847629s)
-    http.go:219: timeout while waiting after 20 attempts, 0/0 successes
+# release-1.0
 
-FAIL	sigs.k8s.io/gateway-api/conformance	318.828s
+$ go test ./conformance -v -timeout 0 -run TestConformance -args --supported-features=Gateway,HTTPRoute,ReferenceGrant \\
+  --skip-tests=HTTPRouteHostnameIntersection,HTTPRouteListenerHostnameMatching
 
-// after updating the timeout below
-+               MaxTimeToConsistency:              60 * time.Second,
 PASS
-ok  	sigs.k8s.io/gateway-api/conformance	311.949s
+ok  	sigs.k8s.io/gateway-api/conformance	226.345s
