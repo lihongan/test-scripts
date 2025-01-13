@@ -1,8 +1,53 @@
-
-
+# release-1.0
 
 $ go test ./conformance -v -timeout 0 -run TestConformance -args --supported-features=Gateway,HTTPRoute,ReferenceGrant //
   --skip-tests=GatewayModifyListeners,HTTPRouteHostnameIntersection,HTTPRouteListenerHostnameMatching
 
 PASS
 ok  	sigs.k8s.io/gateway-api/conformance	113.276s
+
+
+# release-1.1
+
+$ go test ./conformance -v -timeout 0 -run TestConformance -args --supported-features=Gateway,HTTPRoute,ReferenceGrant 
+  --organization="OpenShift" --project="ingress" --url="github.com/openshift/cluster-ingress-operator" --version="4.19" 
+  --report-output=/tmp/ocp-az-gwapi.yaml --conformance-profiles="GATEWAY-HTTP,GATEWAY-TLS" --allow-crds-mismatch=true
+
+# report.yaml
+apiVersion: gateway.networking.k8s.io/v1alpha1
+date: "2025-01-13T19:57:01+08:00"
+gatewayAPIChannel: UNDEFINED
+gatewayAPIVersion: UNDEFINED
+implementation:
+  contact:
+  - ""
+  organization: OpenShift
+  project: ingress
+  url: github.com/openshift/cluster-ingress-operator
+  version: "4.19"
+kind: ConformanceReport
+mode: default
+profiles:
+- core:
+    failedTests:
+    - GatewayModifyListeners
+    - TLSRouteInvalidReferenceGrant
+    - TLSRouteSimpleSameNamespace
+    result: failure
+    statistics:
+      Failed: 3
+      Passed: 8
+      Skipped: 0
+  name: GATEWAY-TLS
+  summary: Core tests failed with 3 test failures.
+- core:
+    failedTests:
+    - GatewayModifyListeners
+    - HTTPRouteHostnameIntersection
+    result: failure
+    statistics:
+      Failed: 2
+      Passed: 31
+      Skipped: 0
+  name: GATEWAY-HTTP
+  summary: Core tests failed with 2 test failures.
