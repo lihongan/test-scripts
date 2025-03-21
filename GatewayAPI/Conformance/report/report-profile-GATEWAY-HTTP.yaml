@@ -1,0 +1,56 @@
+##### specify supported-features and "GATEWAY-HTTP" profile
+#### go test ./conformance -v -timeout 30m -run TestConformance -args --gateway-class=conformance --supported-features=Gateway,HTTPRoute,GatewayPort8080,GatewayHTTPListenerIsolation,HTTPRouteBackendRequestHeaderModification,HTTPRouteQueryParamMatching,HTTPRouteMethodMatching,HTTPRouteResponseHeaderModification,HTTPRoutePortRedirect,HTTPRouteSchemeRedirect,HTTPRoutePathRedirect,HTTPRouteHostRewrite,HTTPRoutePathRewrite,HTTPRouteRequestMirror,HTTPRouteRequestMultipleMirrors,HTTPRouteRequestTimeout,HTTPRouteBackendTimeout,HTTPRouteParentRefPort,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,GRPCRoute,ReferenceGrant \
+#### --organization=RedHat --project=OpenShift --url="url" --version=v4.19  --contact="Contact" --conformance-profiles=GATEWAY-HTTP --report-output=./conformance-profile.yaml
+#####
+
+apiVersion: gateway.networking.k8s.io/v1
+date: "2025-03-21T11:57:25+08:00"
+gatewayAPIChannel: standard
+gatewayAPIVersion: v1.2.1
+implementation:
+  contact:
+  - Contact
+  organization: RedHat
+  project: OpenShift
+  url: url
+  version: v4.19
+kind: ConformanceReport
+mode: default
+profiles:
+- core:
+    result: success
+    statistics:
+      Failed: 0
+      Passed: 33
+      Skipped: 0
+  extended:
+    result: success
+    statistics:
+      Failed: 0
+      Passed: 20
+      Skipped: 0
+    supportedFeatures:
+    - GatewayHTTPListenerIsolation
+    - GatewayPort8080
+    - HTTPRouteBackendProtocolH2C
+    - HTTPRouteBackendProtocolWebSocket
+    - HTTPRouteBackendRequestHeaderModification
+    - HTTPRouteBackendTimeout
+    - HTTPRouteHostRewrite
+    - HTTPRouteMethodMatching
+    - HTTPRouteParentRefPort
+    - HTTPRoutePathRedirect
+    - HTTPRoutePathRewrite
+    - HTTPRoutePortRedirect
+    - HTTPRouteQueryParamMatching
+    - HTTPRouteRequestMirror
+    - HTTPRouteRequestMultipleMirrors
+    - HTTPRouteRequestTimeout
+    - HTTPRouteResponseHeaderModification
+    - HTTPRouteSchemeRedirect
+    unsupportedFeatures:
+    - GatewayInfrastructurePropagation
+    - GatewayStaticAddresses
+    - HTTPRouteDestinationPortMatching
+  name: GATEWAY-HTTP
+  summary: Core tests succeeded. Extended tests succeeded.
