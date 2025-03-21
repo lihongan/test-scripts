@@ -1,0 +1,121 @@
+##### 
+##### go test ./conformance -v -timeout 30m -run TestConformance -args --gateway-class=conformance --supported-features=Gateway,HTTPRoute,GatewayPort8080,GatewayHTTPListenerIsolation,HTTPRouteBackendRequestHeaderModification,HTTPRouteQueryParamMatching,HTTPRouteMethodMatching,HTTPRouteResponseHeaderModification,HTTPRoutePortRedirect,HTTPRouteSchemeRedirect,HTTPRoutePathRedirect,HTTPRouteHostRewrite,HTTPRoutePathRewrite,HTTPRouteRequestMirror,HTTPRouteRequestMultipleMirrors,HTTPRouteRequestTimeout,HTTPRouteBackendTimeout,HTTPRouteParentRefPort,HTTPRouteBackendProtocolH2C,HTTPRouteBackendProtocolWebSocket,GRPCRoute,ReferenceGrant /
+##### --organization=RedHat --project=OpenShift --url="url" --version=v4.19  --contact="Contact" --conformance-profiles="GATEWAY-HTTP,GATEWAY-GRPC,GATEWAY-TLS,MESH-HTTP,MESH-GRPC" --report-output=./conformance-profile.yaml
+#####
+
+apiVersion: gateway.networking.k8s.io/v1
+date: "2025-03-21T12:44:03+08:00"
+gatewayAPIChannel: standard
+gatewayAPIVersion: v1.2.1
+implementation:
+  contact:
+  - Contact
+  organization: RedHat
+  project: OpenShift
+  url: url
+  version: v4.19
+kind: ConformanceReport
+mode: default
+profiles:
+- core:
+    result: success
+    statistics:
+      Failed: 0
+      Passed: 12
+      Skipped: 0
+  name: GATEWAY-GRPC
+  summary: Core tests succeeded.
+- core:
+    result: success
+    statistics:
+      Failed: 0
+      Passed: 33
+      Skipped: 0
+  extended:
+    result: success
+    statistics:
+      Failed: 0
+      Passed: 20
+      Skipped: 0
+    supportedFeatures:
+    - GatewayHTTPListenerIsolation
+    - GatewayPort8080
+    - HTTPRouteBackendProtocolH2C
+    - HTTPRouteBackendProtocolWebSocket
+    - HTTPRouteBackendRequestHeaderModification
+    - HTTPRouteBackendTimeout
+    - HTTPRouteHostRewrite
+    - HTTPRouteMethodMatching
+    - HTTPRouteParentRefPort
+    - HTTPRoutePathRedirect
+    - HTTPRoutePathRewrite
+    - HTTPRoutePortRedirect
+    - HTTPRouteQueryParamMatching
+    - HTTPRouteRequestMirror
+    - HTTPRouteRequestMultipleMirrors
+    - HTTPRouteRequestTimeout
+    - HTTPRouteResponseHeaderModification
+    - HTTPRouteSchemeRedirect
+    unsupportedFeatures:
+    - GatewayInfrastructurePropagation
+    - GatewayStaticAddresses
+    - HTTPRouteDestinationPortMatching
+  name: GATEWAY-HTTP
+  summary: Core tests succeeded. Extended tests succeeded.
+- core:
+    failedTests:
+    - TLSRouteInvalidReferenceGrant
+    - TLSRouteSimpleSameNamespace
+    result: failure
+    statistics:
+      Failed: 2
+      Passed: 9
+      Skipped: 0
+  name: GATEWAY-TLS
+  summary: Core tests failed with 2 test failures.
+- core:
+    result: success
+    statistics:
+      Failed: 0
+      Passed: 1
+      Skipped: 0
+  name: MESH-GRPC
+  summary: Core tests succeeded.
+- core:
+    result: success
+    statistics:
+      Failed: 0
+      Passed: 2
+      Skipped: 0
+  extended:
+    failedTests:
+    - MeshFrontend
+    - MeshPorts
+    result: failure
+    statistics:
+      Failed: 2
+      Passed: 0
+      Skipped: 0
+    supportedFeatures:
+    - HTTPRouteBackendProtocolH2C
+    - HTTPRouteBackendProtocolWebSocket
+    - HTTPRouteBackendRequestHeaderModification
+    - HTTPRouteBackendTimeout
+    - HTTPRouteHostRewrite
+    - HTTPRouteMethodMatching
+    - HTTPRouteParentRefPort
+    - HTTPRoutePathRedirect
+    - HTTPRoutePathRewrite
+    - HTTPRoutePortRedirect
+    - HTTPRouteQueryParamMatching
+    - HTTPRouteRequestMirror
+    - HTTPRouteRequestMultipleMirrors
+    - HTTPRouteRequestTimeout
+    - HTTPRouteResponseHeaderModification
+    - HTTPRouteSchemeRedirect
+    unsupportedFeatures:
+    - HTTPRouteDestinationPortMatching
+    - MeshClusterIPMatching
+    - MeshConsumerRoute
+  name: MESH-HTTP
+  summary: Core tests succeeded. Extended tests failed with 2 test failures.
