@@ -1,12 +1,12 @@
 ## Configuration Steps/Smoke Test
-Tested with OCP 4.18 (AWS, Azure, GCP, IBMCloud)
+Tested with OCP 4.19 (AWS, Azure, GCP, IBMCloud)
 
-### Enable feature gate
+### Enable TechPreview
 ```console
-$ oc patch featuregates/cluster --type=merge --patch='{"spec":{"featureSet":"CustomNoUpgrade","customNoUpgrade":{"enabled":["GatewayAPI"]}}}'
+$ oc patch featuregates/cluster --type=merge --patch='{"spec":{"featureSet":"TechPreviewNoUpgrade"}}'
 
-// ensure gateway CRDs are created
-$ oc get crds | grep -e gateway.networking.k8s.io -e maistra.io
+// ensure GatewayAPI CRDs exist
+$ oc get crds | grep -e gateway.networking.k8s.io
 ```
 note: all nodes will be restarted, wait for some time until router pods are recreated.
 
@@ -19,17 +19,15 @@ kind: GatewayClass
 metadata:
   name: openshift-default
 spec:
-  controllerName: openshift.io/gateway-controller
+  controllerName: openshift.io/gateway-controller/v1
 EOF
 
-// wait and ensure OSSM/istio operator is installed
+// wait and ensure OSSM3.0 operator is installed
 $ oc get gatewayclass
 $ oc -n openshift-operators get sub,csv,pod
 $ oc -n openshift-ingress get pod
-$ oc -n openshift-ingress get servicemeshcontrolplanes
+$ oc get istio
 
-// more servicemesh related CRDs are created
-$ oc get crds | grep -e gateway.networking.k8s.io -e maistra.io
 ```
 
 ### Create Gateway
