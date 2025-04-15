@@ -1,4 +1,5 @@
-## Configuration Steps/Smoke Test
+## Configurations and Test Steps
+
 Tested with OCP 4.19 (AWS, Azure, GCP, IBMCloud)
 
 ### Enable TechPreview
@@ -12,6 +13,8 @@ note: all nodes will be restarted, wait for some time until router pods are recr
 
 ### Create GatewayClass
 
+note: OSSM will be installed automatically after creating gatewayclass
+
 ```console
 $ oc create -f -<<EOF
 apiVersion: gateway.networking.k8s.io/v1
@@ -22,11 +25,23 @@ spec:
   controllerName: openshift.io/gateway-controller/v1
 EOF
 
-// wait and ensure OSSM3.0 operator is installed
+// wait and ensure gatewayclass ACCEPTED=True
 $ oc get gatewayclass
+NAME                CONTROLLER                           ACCEPTED   AGE
+openshift-default   openshift.io/gateway-controller/v1   True       106s
+
+// ensure OSSM is installed
 $ oc -n openshift-operators get sub,csv,pod
-$ oc -n openshift-ingress get pod
-$ oc get istio
+
+// ensure istio STATUS=Healthy
+$ oc get istio 
+NAME                REVISIONS   READY   IN USE   ACTIVE REVISION     STATUS    VERSION   AGE
+openshift-gateway   1           1       0        openshift-gateway   Healthy   v1.24.3   5m16s
+
+// ensure istiod deployment is ready
+$ oc -n openshift-ingress get deployment
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+istiod-openshift-gateway   1/1     1            1           6m46s
 
 ```
 
