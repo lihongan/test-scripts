@@ -1,19 +1,16 @@
 ## Configurations and Test Steps
 
-Tested with OCP 4.19 (AWS, Azure, GCP, IBMCloud)
+Tested with OCP 4.19/4.20
 
-### Enable TechPreview
-```console
-$ oc patch featuregates/cluster --type=merge --patch='{"spec":{"featureSet":"TechPreviewNoUpgrade"}}'
+Note: The feature has been promoted to GA since 4.19.
 
-// ensure GatewayAPI CRDs exist
-$ oc get crds | grep -e gateway.networking.k8s.io
-```
-note: all nodes will be restarted, wait for some time until router pods are recreated.
+Supported Platforms: AWS, Azure, GCP, IBMCloud, PowerVS
+
+Supported Arch: amd64, arm64, ppc64le
 
 ### Create GatewayClass
 
-note: OSSM will be installed automatically after creating gatewayclass
+note: OSSM operator will be installed automatically after creating gatewayclass
 
 ```console
 $ oc create -f -<<EOF
@@ -30,7 +27,7 @@ $ oc get gatewayclass
 NAME                CONTROLLER                           ACCEPTED   AGE
 openshift-default   openshift.io/gateway-controller/v1   True       106s
 
-// ensure OSSM is installed
+// ensure OSSM operator is installed
 $ oc -n openshift-operators get sub,csv,pod
 
 // ensure istio STATUS=Healthy
