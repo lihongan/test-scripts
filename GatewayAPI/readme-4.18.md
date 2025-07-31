@@ -1,3 +1,4 @@
+# Note: The feature is Dev Preview in 4.18 and prior
 ## Configuration Steps/Smoke Test
 Tested with OCP 4.18 (AWS, Azure, GCP, IBMCloud)
 
