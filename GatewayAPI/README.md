@@ -99,7 +99,6 @@ EOF
 ```console
 $ oc get httproute
 $ curl http://test.$gwapi_domain/
-$ curl --cacert /tmp/gwapi/ca.crt "https://test.$gwapi_domain/" -v
 
 ```
 note: HTTP2 is enabled by default in envoy proxy
@@ -155,4 +154,6 @@ EOF
 $ oc -n openshift-ingress get svc,pod
 $ oc -n openshift-ingress get gateway
 
+// curl the httproute via https
+$ curl --cacert /tmp/gwapi/ca.crt "https://test.$gwapi_domain/" -v
 ```
