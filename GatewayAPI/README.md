@@ -44,12 +44,8 @@ istiod-openshift-gateway   1/1     1            1           6m46s
 
 ### Create Gateway
 ```console
-// to support https in gateway we need prepare the secret
 base_domain="$(oc get dnses.config/cluster -o jsonpath='{.spec.baseDomain}')"
 gwapi_domain="gwapi.${base_domain}"
-mkdir /tmp/gwapi
-openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -keyout /tmp/gwapi/ca.key -out /tmp/gwapi/ca.crt -nodes -subj '/C=US/ST=NC/L=Chocowinity/O=OS3/OU=Eng/CN=gwapi-ca' && openssl req -newkey rsa:4096 -nodes -sha256 -keyout /tmp/gwapi/wildcard.key -out /tmp/gwapi/wildcard.csr -subj "/C=US/ST=NC/L=Chocowinity/O=OS3/OU=Eng/CN=*.$gwapi_domain" && openssl x509 -req -days 365 -in /tmp/gwapi/wildcard.csr -CA /tmp/gwapi/ca.crt -CAcreateserial -CAkey /tmp/gwapi/ca.key -out /tmp/gwapi/wildcard.crt
-oc -n openshift-ingress create secret tls gwapi-wildcard --cert=/tmp/gwapi/wildcard.crt --key=/tmp/gwapi/wildcard.key
 
 $ oc create -f - <<EOF
 apiVersion: gateway.networking.k8s.io/v1
@@ -64,17 +60,6 @@ spec:
     hostname: "*.$gwapi_domain"
     port: 80
     protocol: HTTP
-    allowedRoutes:
-      namespaces:
-        from: All
-  - name: https
-    hostname: "*.$gwapi_domain"
-    port: 443
-    protocol: HTTPS
-    tls:
-      mode: Terminate
-      certificateRefs:
-      - name: gwapi-wildcard
     allowedRoutes:
       namespaces:
         from: All
@@ -126,4 +111,48 @@ https://github.com/kubernetes-sigs/gateway-api
 https://gateway-api.sigs.k8s.io/
 
 https://github.com/openshift-service-mesh
+
+
+### （Alternative) Create Gateway with HTTPS
+```console
+// to support https in gateway we need prepare the secret
+base_domain="$(oc get dnses.config/cluster -o jsonpath='{.spec.baseDomain}')"
+gwapi_domain="gwapi.${base_domain}"
+mkdir /tmp/gwapi
+openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -keyout /tmp/gwapi/ca.key -out /tmp/gwapi/ca.crt -nodes -subj '/C=US/ST=NC/L=Chocowinity/O=OS3/OU=Eng/CN=gwapi-ca' && openssl req -newkey rsa:4096 -nodes -sha256 -keyout /tmp/gwapi/wildcard.key -out /tmp/gwapi/wildcard.csr -subj "/C=US/ST=NC/L=Chocowinity/O=OS3/OU=Eng/CN=*.$gwapi_domain" && openssl x509 -req -days 365 -in /tmp/gwapi/wildcard.csr -CA /tmp/gwapi/ca.crt -CAcreateserial -CAkey /tmp/gwapi/ca.key -out /tmp/gwapi/wildcard.crt
+oc -n openshift-ingress create secret tls gwapi-wildcard --cert=/tmp/gwapi/wildcard.crt --key=/tmp/gwapi/wildcard.key
+
+$ oc create -f - <<EOF
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: openshift-ingress
+spec:
+  gatewayClassName: openshift-default
+  listeners:
+  - name: http
+    hostname: "*.$gwapi_domain"
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: https
+    hostname: "*.$gwapi_domain"
+    port: 443
+    protocol: HTTPS
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: gwapi-wildcard
+    allowedRoutes:
+      namespaces:
+        from: All
+EOF
+// ensure gateway pod and LB service are created
+$ oc -n openshift-ingress get svc,pod
+$ oc -n openshift-ingress get gateway
+
+```
 
