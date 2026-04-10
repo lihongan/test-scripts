@@ -1,0 +1,198 @@
+---
+# 1. RBAC: ClusterRole for EPP to access Kubernetes resources
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: inferencepool-reader
+rules:
+- apiGroups: ["inference.networking.k8s.io", "inference.networking.x-k8s.io"]
+  resources: ["inferencepools", "inferencemodels", "inferenceobjectives"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["authentication.k8s.io"]
+  resources: ["tokenreviews"]
+  verbs: ["create"]
+- apiGroups: ["authorization.k8s.io"]
+  resources: ["subjectaccessreviews"]
+  verbs: ["create"]
+
+---
+# 2. RBAC: ClusterRoleBinding to grant permissions to default service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: inferencepool-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: inferencepool-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# 3. vLLM Server Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-server
+  template:
+    metadata:
+      labels:
+        app: vllm-server
+    spec:
+      containers:
+      - name: vllm
+        image: public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.9.1
+        imagePullPolicy: Always
+        command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
+        args:
+        - "--model=Qwen/Qwen2.5-1.5B-Instruct"
+        - "--port=8000"
+        env:
+        - name: PORT
+          value: "8000"
+        - name: VLLM_CPU_KVCACHE_SPACE
+          value: "2"
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: "2"
+            memory: "8Gi"
+          limits:
+            cpu: "4"
+            memory: "16Gi"
+
+---
+# 4. EPP Service (for gRPC communication with Gateway)
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-epp
+  namespace: default
+spec:
+  selector:
+    app: simple-epp
+  ports:
+  - name: grpc
+    protocol: TCP
+    port: 9002
+    targetPort: 9002
+    appProtocol: http2
+  - name: grpc-health
+    protocol: TCP
+    port: 9003
+    targetPort: 9003
+  - name: metrics
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+  type: ClusterIP
+
+---
+# 5. EPP (Endpoint Picker) Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-epp
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simple-epp
+  template:
+    metadata:
+      labels:
+        app: simple-epp
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: epp
+        # image: us-central1-docker.pkg.dev/k8s-staging-images/gateway-api-inference-extension/epp:main
+        image: registry.k8s.io/gateway-api-inference-extension/epp:v1.0.0
+        imagePullPolicy: Always
+        args:
+        - "-pool-name=vllm-pool"
+        - "-pool-namespace=default"
+        - "-pool-group=inference.networking.x-k8s.io"
+        - "-grpc-port=9002"
+        - "-grpc-health-port=9003"
+        - "-config-text=apiVersion: inference.networking.x-k8s.io/v1alpha1\nkind: EndpointPickerConfig"
+        ports:
+        - containerPort: 9002
+          name: grpc
+          protocol: TCP
+        - containerPort: 9003
+          name: grpc-health
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        livenessProbe:
+          grpc:
+            port: 9003
+            service: inference-extension
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          grpc:
+            port: 9003
+            service: inference-extension
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+---
+# 6. InferencePool Resource
+apiVersion: inference.networking.x-k8s.io/v1alpha2
+kind: InferencePool
+metadata:
+  name: vllm-pool
+  namespace: default
+spec:
+  # Label selector to match vLLM server pods
+  selector:
+    app: vllm-server
+  # Port on vLLM server for inference requests
+  targetPortNumber: 8000
+  # Reference to EPP service for endpoint picking
+  extensionRef:
+    name: simple-epp
+    namespace: default
+    # Optional: specify failure mode (FailClose or FailOpen)
+    failureMode: FailClose
